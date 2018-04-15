@@ -7,8 +7,11 @@
 # https://www.sslproxies.org
 
 #from requests import Request, Session
-import urllib3
-from urllib3.contrib.socks import SOCKSProxyManager
+#import urllib3
+#from urllib3.contrib.socks import SOCKSProxyManager
+
+import socks
+#import socket
 
 
 """ my header 
@@ -23,41 +26,12 @@ sslproxy = '192.168.0.10'
 sslproxyport = '3128'
 destination = 'google.com:443'
 
-pool = urllib3.HTTPConnectionPool(sslproxy, sslproxyport)
-# pool.request('CONNECT ' + destination, '/') 	# does not pass off handling response when it only gets the status code with no other headers...
-#resp = pool.request('CONNECT ' + destination, sslproxy) 
-#resp = pool.request('CONNECT ', sslproxy+ ':' +sslproxyport) 
-#resp = pool.request('CONNECT ' + sslproxy + ':' + sslproxyport, '/')
-#resp = pool.request('CONNECT ' + sslproxy + ':' + sslproxyport, '/')
-#import pdb; pdb.set_trace()
-resp = pool.request('CONNECT ' + destination , '/')
+sock = socks.socksocket() # Same API as socket.socket in the standard lib
+sock.set_proxy(socks.SOCKS5, "192.168.0.10", 9050)	# tor entrance
 
-print resp.status
+sock.connect(('google.com', 80))
+sock.send('CONNECT HTTP/1.1')
 
-#resp = pool.request('GET', '/', sslproxy)
-
-#pool.SOCKSProxyManager('socks5://192.168.0.10:9050/')
-#resp = proxy.request('CONNECT ' + destination, sslproxy)
-
-
-
-#proxy = SOCKSProxyManager('socks5://192.168.0.10:9050/')
-#resp = proxy.request('CONNECT ' + destination, sslproxy)
-
-print resp.data
-
-#s = Session()
-#r = Request('CONNECT https://mail.gentoocloud.com', 'http://80.211.4.187:8080')
-#
-#prepped = r.prepare()
-#
-#resp = s.send(prepped,
-#    proxies=proxy,
-#)
-
-#r = requests.connect("https://google.com", proxies=proxy)
-
-
-#print resp.content
+print sock.recv(5000)
 
 
