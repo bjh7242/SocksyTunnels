@@ -30,7 +30,7 @@ sock = socks.socksocket() # Same API as socket.socket in the standard lib
 sock.set_proxy(socks.SOCKS5, "192.168.0.10", 9050)	# tor entrance
 
 sock.connect(('google.com', 80))
-sock.send('CONNECT HTTP/1.1')
+sock.send('GET / HTTP/1.1\r\nHost: google.com\r\n\r\n')
 
 print sock.recv(5000)
 
