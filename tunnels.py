@@ -9,7 +9,7 @@ import socks
 import sys
 import time
 
-def recv_timeout(the_socket,timeout=2):
+def recv_timeout(the_socket,timeout=.2):
     the_socket.setblocking(0)
     total_data = []
     data = '' 
@@ -59,19 +59,10 @@ def create_listener(listenip, listenport, socksconn):
         conn, addr = s.accept()
         print "Connection from address: " + str(addr)
         while True:
-            #req = conn.recv(1024)
-            req = recv_timeout(conn)
-            #if not req:
-            #    break
-            print req
-            socksconn.sendall(req)		# send the data through the socks connection
-            #while True:
-            #data = socksconn.recv(1024)
+            req = recv_timeout(conn)	# receive data from the client
+            socksconn.send(req)		# send the data through the socks connection to the destination
             data = recv_timeout(socksconn)
-            print data
-            if not data:
-                break
-            conn.sendall(data)
+            conn.send(data)
 
     except KeyboardInterrupt:
         print "CTRL-C received. Quitting."
