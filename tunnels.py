@@ -22,15 +22,23 @@ CONNECT https://google.com
 """
 
 #sslproxy = '206.189.47.247:3128'
-sslproxy = '192.168.0.10'
-sslproxyport = '3128'
-destination = 'google.com:443'
+torproxy = '192.168.0.10'
+torport = 9050
+sslproxy = '64.235.46.37'				# last hop proxy IP
+sslproxyport = 8080						# last hop proxy port number
+destination = 'google.com'
+destinationport = '80'
 
 sock = socks.socksocket() # Same API as socket.socket in the standard lib
-sock.set_proxy(socks.SOCKS5, "192.168.0.10", 9050)	# tor entrance
+sock.set_proxy(socks.SOCKS5, torproxy, torport)	# tor entrance
 
-sock.connect(('google.com', 80))
-sock.send('GET / HTTP/1.1\r\nHost: google.com\r\n\r\n')
+sock.connect((sslproxy, sslproxyport))
+#sock.send('GET / HTTP/1.1\r\nHost: google.com\r\n\r\n')
+sock.send('CONNECT ' + destination + ':' + str(destinationport) + ' HTTP/1.1\r\n\r\n')
+
+print sock.recv(5000)
+
+sock.send('GET / HTTP/1.1\r\nHost: ' + destination + '\r\n\r\n')
 
 print sock.recv(5000)
 
