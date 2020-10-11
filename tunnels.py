@@ -50,12 +50,12 @@ def create_listener(listenip, listenport, socksconn, timeout):
     except socket.error as msg:
         s.close()
         s = None
-        print msg
+        print(msg)
         sys.exit()
 
     try:
         conn, addr = s.accept()
-        print "Connection from address: " + str(addr)
+        print("Connection from address: " + str(addr))
         while True:
             req = recv_timeout(conn, timeout)	# receive data from the client
             socksconn.send(req)		# send the data through the socks connection to the destination
@@ -63,7 +63,7 @@ def create_listener(listenip, listenport, socksconn, timeout):
             conn.send(data)
 
     except KeyboardInterrupt:
-        print "CTRL-C received. Quitting."
+        print("CTRL-C received. Quitting.")
         conn.close()
         s.close()
     sys.exit()
@@ -87,7 +87,7 @@ def create_tunnel(args):
     # send CONNECT request to the proxy
     sock.send('CONNECT ' + destination + ':' + str(destinationport) + ' HTTP/1.1\r\n\r\n')
     
-    print sock.recv(1024)
+    print(sock.recv(1024))
     create_listener(listenip, listenport, sock, timeout)
     
 
